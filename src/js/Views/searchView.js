@@ -12,7 +12,7 @@ export const highlightSelected = (id) => {
   });
 
   document
-    .querySelector(`a[href="#${id}"]`)
+    .querySelector(`.results__link[href="#${id}"]`)
     .classList.add("results__link--active");
 };
 
@@ -21,16 +21,23 @@ export const clearResults = () => {
   elements.searchResPages.innerHTML = "";
 };
 
-export const renderResults = (recipes, page = 1, resPerPage = 10) => {
-  // render results of current page
-  const start = (page - 1) * resPerPage; // 1) (1 - 1) * 10 = 0, 2) (2 - 1) * 10  = 10
-  const end = page * resPerPage; // 1) 1 * 10 = 10, 2) 2 * 10 = 20
+/* 
+    take a title and return a new title under de limit of words and add ... to the new title 
+*/
+export const limitRecipeTitle = (title, limit = 17) => {
+  const Title = [];
+  if (title.length > limit) {
+    title.split(" ").reduce((acc, cur) => {
+      if (acc + cur.length <= limit) {
+        Title.push(cur);
+      }
 
-  // start=0, end=10, exclusive
-  recipes.slice(start, end).forEach(renderRecipe);
+      return acc + cur.length;
+    }, 0);
 
-  // render pagination button
-  renderButtons(page, recipes.length, resPerPage);
+    return `${Title.join(" ")} ...`;
+  }
+  return title;
 };
 
 const renderRecipe = (recipe) => {
@@ -50,23 +57,18 @@ const renderRecipe = (recipe) => {
 `;
   elements.searchResultsListDOM.insertAdjacentHTML("beforeend", markup);
 };
-/* 
-    take a title and return a new title under de limit of words and add ... to the new title 
-*/
-const limitRecipeTitle = (title, limit = 17) => {
-  const Title = [];
-  if (title.length > limit) {
-    title.split(" ").reduce((acc, cur) => {
-      if (acc + cur.length <= limit) {
-        Title.push(cur);
-      }
 
-      return acc + cur.length;
-    }, 0);
+// render results with pagination
+export const renderResults = (recipes, page = 1, resPerPage = 10) => {
+  // render results of current page
+  const start = (page - 1) * resPerPage; // 1) (1 - 1) * 10 = 0, 2) (2 - 1) * 10  = 10
+  const end = page * resPerPage; // 1) 1 * 10 = 10, 2) 2 * 10 = 20
 
-    return `${Title.join(" ")} ...`;
-  }
-  return title;
+  // start=0, end=10, exclusive
+  recipes.slice(start, end).forEach(renderRecipe);
+
+  // render pagination button
+  renderButtons(page, recipes.length, resPerPage);
 };
 
 // create pages per num of responses
