@@ -1,5 +1,4 @@
 import Axios from "axios";
-import { elements } from "../Views/base";
 
 export default class Recipe {
   constructor(id) {
